@@ -17,7 +17,7 @@ jobs:
       - name: Clone Huntban Client from GitLab
         shell: bash
         run: |
-          git clone https://oauth2:${{ secrets.GITLAB_TOKEN }}@gitlab.com/jholarck/huntban-client.git
+          git clone -b upgrade https://oauth2:${{ secrets.GITLAB_TOKEN }}@gitlab.com/jholarck/huntban-client.git
 
       - name: Setup Node.js
         uses: actions/setup-node@v4
@@ -64,7 +64,7 @@ jobs:
 
       - name: Clone Huntban Client from GitLab
         run: |
-          git clone https://oauth2:${{ secrets.GITLAB_TOKEN }}@gitlab.com/jholarck/huntban-client.git
+          git clone -b upgrade https://oauth2:${{ secrets.GITLAB_TOKEN }}@gitlab.com/jholarck/huntban-client.git
 
       - name: Setup Node.js
         uses: actions/setup-node@v4
