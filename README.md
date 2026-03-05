@@ -8,7 +8,8 @@ Para que el sistema funcione, debes configurar los siguientes **Secrets** en Git
 
 1.  **`GITLAB_TOKEN`**: Tu Personal Access Token de GitLab con permisos de `read_repository`.
 2.  **`TAURI_SIGNING_PRIVATE_KEY`**: El contenido de tu archivo de clave privada (`sign_private.txt`).
-3.  **`GITHUB_TOKEN`**: Se genera automáticamente, no necesitas añadirlo.
+3.  **`TAURI_SIGNING_PRIVATE_KEY_PASSWORD`**: La contraseña de tu clave (ej: `huntban`).
+4.  **`GITHUB_TOKEN`**: Se genera automáticamente, no necesitas añadirlo.
 
 ## 🚀 Flujo Profesional de Lanzamiento (Pro Release Flow)
 
