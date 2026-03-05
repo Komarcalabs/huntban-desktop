@@ -36,6 +36,15 @@ jobs:
           cd huntban-client
           npm install
 
+      - name: Sync version to huntban-client
+        shell: bash
+        run: |
+          VERSION=$(node -p "require('./package.json').version")
+          echo "Syncing version $VERSION to huntban-client..."
+          cd huntban-client
+          node -e "let p=require('./package.json'); p.version='$VERSION'; require('fs').writeFileSync('./package.json', JSON.stringify(p, null, 2))"
+          node -e "let t=require('./src-tauri/tauri.conf.json'); t.version='$VERSION'; require('fs').writeFileSync('./src-tauri/tauri.conf.json', JSON.stringify(t, null, 2))"
+
       - name: Build Windows App
         run: |
           cd huntban-client
@@ -78,6 +87,14 @@ jobs:
         run: |
           cd huntban-client
           npm install
+
+      - name: Sync version to huntban-client
+        run: |
+          VERSION=$(node -p "require('./package.json').version")
+          echo "Syncing version $VERSION to huntban-client..."
+          cd huntban-client
+          node -e "let p=require('./package.json'); p.version='$VERSION'; require('fs').writeFileSync('./package.json', JSON.stringify(p, null, 2))"
+          node -e "let t=require('./src-tauri/tauri.conf.json'); t.version='$VERSION'; require('fs').writeFileSync('./src-tauri/tauri.conf.json', JSON.stringify(t, null, 2))"
 
       - name: Build MacOS App
         run: |
