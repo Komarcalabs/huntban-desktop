@@ -2,9 +2,6 @@ name: Build Desktop App
 
 on:
   push:
-    branches:
-      - main
-      - upgrade
     tags:
       - "v*"
   workflow_dispatch:
