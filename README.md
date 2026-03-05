@@ -15,13 +15,12 @@ Para que el sistema funcione, debes configurar los siguientes **Secrets** en Git
 
 Si al descargar el `.dmg` e instalar la app recibes el mensaje: **"Huntban está dañado y no puede abrirse"**, es debido a que la aplicación no está firmada con un Certificado de Desarrollador de Apple (Gatekeeper).
 
-### Solución Temporal (para pruebas):
+### Solución Sencilla (sin terminal):
 
-Una vez que hayas movido la aplicación a tu carpeta de **Aplicaciones**, abre una terminal y ejecuta:
-
-```bash
-sudo xattr -rd com.apple.quarantine /Applications/Huntban.app
-```
+1.  Mueve la aplicación a tu carpeta de **Aplicaciones**.
+2.  **No hagas doble clic**. En su lugar, haz **clic derecho** (o Control + Clic) sobre el icono de Huntban.
+3.  Selecciona **Abrir**.
+4.  Te aparecerá un cuadro de diálogo diferente. Haz clic en el botón **Abrir**. macOS recordará esta excepción y ya podrás abrirla normalmente siempre.
 
 ### Solución Permanente:
 
