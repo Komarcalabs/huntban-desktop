@@ -66,26 +66,11 @@ jobs:
           echo "Generating temporary key file..."
           node -e "require('fs').writeFileSync('sign_private.txt', process.env.SIGNING_KEY_DATA.trim())"
 
-          # Sign MSI
-          MSI_FILE=$(ls src-tauri/target/release/bundle/msi/*.msi | head -n 1)
-          if [ -f "$MSI_FILE" ]; then
-            echo "Signing $MSI_FILE..."
-            npx tauri signer sign -p "$TAURI_SIGNING_PRIVATE_KEY_PASSWORD" -f sign_private.txt "$MSI_FILE" > "$MSI_FILE.sig"
-          fi
-
-          # Sign EXE (NSIS)
-          EXE_FILE=$(ls src-tauri/target/release/bundle/nsis/*.exe | head -n 1)
-          if [ -f "$EXE_FILE" ]; then
-            echo "Signing $EXE_FILE..."
-            npx tauri signer sign -p "$TAURI_SIGNING_PRIVATE_KEY_PASSWORD" -f sign_private.txt "$EXE_FILE" > "$EXE_FILE.sig"
-          fi
-
-          # Sign ZIP (Updater)
-          ZIP_FILE=$(ls src-tauri/target/release/bundle/nsis/*.zip | head -n 1)
-          if [ -f "$ZIP_FILE" ]; then
-            echo "Signing $ZIP_FILE..."
-            npx tauri signer sign -p "$TAURI_SIGNING_PRIVATE_KEY_PASSWORD" -f sign_private.txt "$ZIP_FILE" > "$ZIP_FILE.sig"
-          fi
+          # Dynamically find and sign all target files
+          find "src-tauri/target/release/bundle" -type f \( -name "*.msi" -o -name "*.exe" -o -name "*.zip" \) | while read file; do
+            echo "Signing $file..."
+            npx tauri signer sign -p "$TAURI_SIGNING_PRIVATE_KEY_PASSWORD" -f sign_private.txt "$file" > "$file.sig"
+          done
 
           rm sign_private.txt
 
@@ -94,12 +79,12 @@ jobs:
         with:
           name: huntban-windows-installer
           path: |
-            huntban-client/src-tauri/target/release/bundle/msi/*.msi
-            huntban-client/src-tauri/target/release/bundle/msi/*.msi.sig
-            huntban-client/src-tauri/target/release/bundle/nsis/*.exe
-            huntban-client/src-tauri/target/release/bundle/nsis/*.exe.sig
-            huntban-client/src-tauri/target/release/bundle/nsis/*.zip
-            huntban-client/src-tauri/target/release/bundle/nsis/*.zip.sig
+            huntban-client/src-tauri/target/release/bundle/**/*.msi
+            huntban-client/src-tauri/target/release/bundle/**/*.msi.sig
+            huntban-client/src-tauri/target/release/bundle/**/*.exe
+            huntban-client/src-tauri/target/release/bundle/**/*.exe.sig
+            huntban-client/src-tauri/target/release/bundle/**/*.zip
+            huntban-client/src-tauri/target/release/bundle/**/*.zip.sig
 
   build-macos:
     runs-on: macos-latest
@@ -151,19 +136,11 @@ jobs:
           echo "Generating temporary key file..."
           node -e "require('fs').writeFileSync('sign_private.txt', process.env.SIGNING_KEY_DATA.trim())"
 
-          # Sign DMG
-          DMG_FILE=$(ls src-tauri/target/release/bundle/dmg/*.dmg | head -n 1)
-          if [ -f "$DMG_FILE" ]; then
-            echo "Signing $DMG_FILE..."
-            npx tauri signer sign -p "$TAURI_SIGNING_PRIVATE_KEY_PASSWORD" -f sign_private.txt "$DMG_FILE" > "$DMG_FILE.sig"
-          fi
-
-          # Sign Tarball (Updater)
-          TAR_FILE=$(ls src-tauri/target/release/bundle/macos/*.app.tar.gz | head -n 1)
-          if [ -f "$TAR_FILE" ]; then
-            echo "Signing $TAR_FILE..."
-            npx tauri signer sign -p "$TAURI_SIGNING_PRIVATE_KEY_PASSWORD" -f sign_private.txt "$TAR_FILE" > "$TAR_FILE.sig"
-          fi
+          # Dynamically find and sign all target files
+          find "src-tauri/target/release/bundle" -type f \( -name "*.dmg" -o -name "*.app.tar.gz" \) | while read file; do
+            echo "Signing $file..."
+            npx tauri signer sign -p "$TAURI_SIGNING_PRIVATE_KEY_PASSWORD" -f sign_private.txt "$file" > "$file.sig"
+          done
 
           rm sign_private.txt
 
@@ -172,10 +149,10 @@ jobs:
         with:
           name: huntban-macos-installer
           path: |
-            huntban-client/src-tauri/target/release/bundle/dmg/*.dmg
-            huntban-client/src-tauri/target/release/bundle/dmg/*.dmg.sig
-            huntban-client/src-tauri/target/release/bundle/macos/*.app.tar.gz
-            huntban-client/src-tauri/target/release/bundle/macos/*.app.tar.gz.sig
+            huntban-client/src-tauri/target/release/bundle/**/*.dmg
+            huntban-client/src-tauri/target/release/bundle/**/*.dmg.sig
+            huntban-client/src-tauri/target/release/bundle/**/*.app.tar.gz
+            huntban-client/src-tauri/target/release/bundle/**/*.app.tar.gz.sig
 
   publish-release:
     needs: [build-windows, build-macos]
