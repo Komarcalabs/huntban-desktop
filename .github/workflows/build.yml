@@ -43,12 +43,12 @@ jobs:
           echo "Syncing version $VERSION to huntban-client..."
           cd huntban-client
           node -e "let p=require('./package.json'); p.version='$VERSION'; require('fs').writeFileSync('./package.json', JSON.stringify(p, null, 2))"
-          node -e "let t=require('./src-tauri/tauri.conf.json'); t.version='$VERSION'; require('fs').writeFileSync('./src-tauri/tauri.conf.json', JSON.stringify(t, null, 2))"
+          node -e "let t=require('./src-tauri/tauri.conf.json'); t.version='$VERSION'; t.bundle = t.bundle || {}; t.bundle.createUpdaterArtifacts=true; require('fs').writeFileSync('./src-tauri/tauri.conf.json', JSON.stringify(t, null, 2))"
 
       - name: Build Windows App
         run: |
           cd huntban-client
-          npx tauri build --bundles all,updater
+          npx tauri build
         env:
           TAURI_SIGNING_PRIVATE_KEY: ${{ secrets.TAURI_SIGNING_PRIVATE_KEY }}
           TAURI_SIGNING_PRIVATE_KEY_PASSWORD: ${{ secrets.TAURI_SIGNING_PRIVATE_KEY_PASSWORD }}
@@ -114,12 +114,12 @@ jobs:
           echo "Syncing version $VERSION to huntban-client..."
           cd huntban-client
           node -e "let p=require('./package.json'); p.version='$VERSION'; require('fs').writeFileSync('./package.json', JSON.stringify(p, null, 2))"
-          node -e "let t=require('./src-tauri/tauri.conf.json'); t.version='$VERSION'; require('fs').writeFileSync('./src-tauri/tauri.conf.json', JSON.stringify(t, null, 2))"
+          node -e "let t=require('./src-tauri/tauri.conf.json'); t.version='$VERSION'; t.bundle = t.bundle || {}; t.bundle.createUpdaterArtifacts=true; require('fs').writeFileSync('./src-tauri/tauri.conf.json', JSON.stringify(t, null, 2))"
 
       - name: Build MacOS App
         run: |
           cd huntban-client
-          npx tauri build --bundles all,updater
+          npx tauri build
         env:
           TAURI_SIGNING_PRIVATE_KEY: ${{ secrets.TAURI_SIGNING_PRIVATE_KEY }}
           TAURI_SIGNING_PRIVATE_KEY_PASSWORD: ${{ secrets.TAURI_SIGNING_PRIVATE_KEY_PASSWORD }}
