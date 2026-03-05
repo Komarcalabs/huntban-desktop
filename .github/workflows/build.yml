@@ -202,28 +202,36 @@ jobs:
         run: |
           VERSION=${GITHUB_REF#refs/tags/v}
 
-          MAC_SIG=$(cat $(find ./artifacts/macos -name "*.app.tar.gz.sig" | head -n 1) || echo "")
-          WIN_SIG=$(cat $(find ./artifacts/windows -name "*.exe.sig" | head -n 1) || echo "")
+          MAC_SIG_FILE=$(find ./artifacts/macos -name "*.app.tar.gz.sig" | head -n 1)
+          WIN_SIG_FILE=$(find ./artifacts/windows -name "*.exe.sig" | head -n 1)
+
+          MAC_SIG=$(cat "$MAC_SIG_FILE" || echo "")
+          WIN_SIG=$(cat "$WIN_SIG_FILE" || echo "")
 
           echo "Notifying backend for version $VERSION..."
 
-          PAYLOAD=$(cat <<EOF
-          {
-            "version": "$VERSION",
-            "notes": "Lanzamiento automatizado de Huntban Desktop v$VERSION",
-            "platforms": {
-              "darwin-aarch64": { 
-                "signature": "$MAC_SIG", 
-                "url": "https://github.com/Komarcalabs/huntban-desktop/releases/download/v$VERSION/Huntban.app.tar.gz" 
-              },
-              "windows-x86_64": { 
-                "signature": "$WIN_SIG", 
-                "url": "https://github.com/Komarcalabs/huntban-desktop/releases/download/v$VERSION/Huntban_${VERSION}_x64-setup.exe" 
+          # Use jq to safely construct the JSON payload with correctly escaped newline characters
+          PAYLOAD=$(jq -n \
+            --arg version "$VERSION" \
+            --arg notes "Lanzamiento automatizado de Huntban Desktop v$VERSION" \
+            --arg mac_sig "$MAC_SIG" \
+            --arg mac_url "https://github.com/Komarcalabs/huntban-desktop/releases/download/v$VERSION/Huntban.app.tar.gz" \
+            --arg win_sig "$WIN_SIG" \
+            --arg win_url "https://github.com/Komarcalabs/huntban-desktop/releases/download/v$VERSION/Huntban_${VERSION}_x64-setup.exe" \
+            '{
+              version: $version,
+              notes: $notes,
+              platforms: {
+                "darwin-aarch64": {
+                  signature: $mac_sig,
+                  url: $mac_url
+                },
+                "windows-x86_64": {
+                  signature: $win_sig,
+                  url: $win_url
+                }
               }
-            }
-          }
-          EOF
-          )
+            }')
 
           curl -X POST https://next.huntban.com/updates/webhook \
                -H "Authorization: Bearer $UPDATE_WEBHOOK_SECRET" \
