@@ -48,7 +48,9 @@ jobs:
           name: huntban-windows-installer
           path: |
             huntban-client/src-tauri/target/release/bundle/msi/*.msi
-            huntban-client/src-tauri/target/release/bundle/setup.exe
+            huntban-client/src-tauri/target/release/bundle/msi/*.msi.sig
+            huntban-client/src-tauri/target/release/bundle/nsis/*.exe
+            huntban-client/src-tauri/target/release/bundle/nsis/*.nsis.sig
 
   build-macos:
     runs-on: macos-latest
@@ -89,4 +91,6 @@ jobs:
           name: huntban-macos-installer
           path: |
             huntban-client/src-tauri/target/release/bundle/dmg/*.dmg
+            huntban-client/src-tauri/target/release/bundle/dmg/*.dmg.sig
             huntban-client/src-tauri/target/release/bundle/macos/*.app
+            huntban-client/src-tauri/target/release/bundle/macos/*.app.tar.gz.sig
