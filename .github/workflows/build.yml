@@ -91,6 +91,8 @@ jobs:
             huntban-client/src-tauri/target/release/bundle/msi/*.msi.sig
             huntban-client/src-tauri/target/release/bundle/nsis/*.exe
             huntban-client/src-tauri/target/release/bundle/nsis/*.exe.sig
+            huntban-client/src-tauri/target/release/bundle/nsis/*.zip
+            huntban-client/src-tauri/target/release/bundle/nsis/*.zip.sig
 
   build-macos:
     runs-on: macos-latest
