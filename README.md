@@ -11,6 +11,26 @@ Para que el sistema funcione, debes configurar los siguientes **Secrets** en Git
 3.  **`TAURI_SIGNING_PRIVATE_KEY_PASSWORD`**: La contraseña de tu clave (ej: `huntban`).
 4.  **`GITHUB_TOKEN`**: Se genera automáticamente, no necesitas añadirlo.
 
+## 🛠 Solución de Problemas (macOS)
+
+Si al descargar el `.dmg` e instalar la app recibes el mensaje: **"Huntban está dañado y no puede abrirse"**, es debido a que la aplicación no está firmada con un Certificado de Desarrollador de Apple (Gatekeeper).
+
+### Solución Temporal (para pruebas):
+
+Una vez que hayas movido la aplicación a tu carpeta de **Aplicaciones**, abre una terminal y ejecuta:
+
+```bash
+sudo xattr -rd com.apple.quarantine /Applications/Huntban.app
+```
+
+### Solución Permanente:
+
+Para que esto no ocurra a tus usuarios finales, deberás:
+
+1. Tener una cuenta paga de **Apple Developer Program**.
+2. Crear un certificado de "Developer ID Application".
+3. Configurar los secretos `APPLE_CERTIFICATE`, `APPLE_CERTIFICATE_PASSWORD` y `APPLE_SIGNING_IDENTITY` en GitHub para que Tauri firme la app durante el build.
+
 ## 🚀 Flujo Profesional de Lanzamiento (Pro Release Flow)
 
 Para lanzar una nueva versión oficial, ya no necesitas entrar en la carpeta del cliente. Todo se gestiona desde aquí:
