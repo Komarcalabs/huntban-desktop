@@ -64,7 +64,7 @@ jobs:
           node -e "require('fs').writeFileSync('sign_private.txt', process.env.SIGNING_KEY_DATA.trim())"
 
           # Dynamically find and sign all target files
-          find "src-tauri/target/release/bundle" -type f \( -name "*.msi" -o -name "*.exe" -o -name "*.zip" \) | while read file; do
+          find "src-tauri/target/release/bundle" -type f \( -name "*.msi" -o -name "*.exe" -o -name "*.zip" \) -not -name "*.sig" | while read file; do
             echo "Signing $file..."
             npx tauri signer sign -p "$TAURI_SIGNING_PRIVATE_KEY_PASSWORD" -f sign_private.txt "$file" > "$file.sig"
           done
