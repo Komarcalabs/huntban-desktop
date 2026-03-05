@@ -205,8 +205,8 @@ jobs:
           MAC_SIG_FILE=$(find ./artifacts/macos -name "*.app.tar.gz.sig" | head -n 1)
           WIN_SIG_FILE=$(find ./artifacts/windows -name "*.exe.sig" | head -n 1)
 
-          MAC_SIG=$(awk '/Public signature:/{flag=1; next} /Make sure to include/{flag=0; next} flag' "$MAC_SIG_FILE" | awk 'NF' || echo "")
-          WIN_SIG=$(awk '/Public signature:/{flag=1; next} /Make sure to include/{flag=0; next} flag' "$WIN_SIG_FILE" | awk 'NF' || echo "")
+          MAC_SIG=$(awk '/Public signature:/{flag=1; next} /Make sure to include/{flag=0; next} flag' "$MAC_SIG_FILE" | awk 'NF' | tail -n 1 || echo "")
+          WIN_SIG=$(awk '/Public signature:/{flag=1; next} /Make sure to include/{flag=0; next} flag' "$WIN_SIG_FILE" | awk 'NF' | tail -n 1 || echo "")
 
           echo "Notifying backend for version $VERSION..."
 
