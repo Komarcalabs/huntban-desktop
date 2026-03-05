@@ -201,16 +201,33 @@ jobs:
           UPDATE_WEBHOOK_SECRET: ${{ secrets.UPDATE_WEBHOOK_SECRET }}
         run: |
           VERSION=${GITHUB_REF#refs/tags/v}
+          echo "Processing signatures for version $VERSION..."
 
-          MAC_SIG_FILE=$(find ./artifacts/macos -name "*.app.tar.gz.sig" | head -n 1)
-          WIN_SIG_FILE=$(find ./artifacts/windows -name "*.exe.sig" | head -n 1)
+          # Safely find existing .sig files
+          MAC_SIG_FILE=$(find ./artifacts/macos -type f -name "*.app.tar.gz.sig" | head -n 1)
+          WIN_SIG_FILE=$(find ./artifacts/windows -type f -name "*.exe.sig" | head -n 1)
 
-          MAC_SIG=$(awk '/Public signature:/{flag=1; next} /Make sure to include/{flag=0; next} flag' "$MAC_SIG_FILE" | awk 'NF' | tail -n 1 || echo "")
-          WIN_SIG=$(awk '/Public signature:/{flag=1; next} /Make sure to include/{flag=0; next} flag' "$WIN_SIG_FILE" | awk 'NF' | tail -n 1 || echo "")
+          MAC_SIG=""
+          WIN_SIG=""
 
-          echo "Notifying backend for version $VERSION..."
+          # Only process if file physically exists
+          if [ -f "$MAC_SIG_FILE" ]; then
+            MAC_SIG=$(cat "$MAC_SIG_FILE" | awk '/Public signature:/{flag=1; next} /Make sure to include/{flag=0; next} flag' | awk 'NF' | tail -n 1)
+          else
+            echo "Warning: MacOS signature file not found or empty path ($MAC_SIG_FILE)"
+          fi
 
-          # Use jq to safely construct the JSON payload with correctly escaped newline characters
+          if [ -f "$WIN_SIG_FILE" ]; then
+            WIN_SIG=$(cat "$WIN_SIG_FILE" | awk '/Public signature:/{flag=1; next} /Make sure to include/{flag=0; next} flag' | awk 'NF' | tail -n 1)
+          else
+            echo "Warning: Windows signature file not found or empty path ($WIN_SIG_FILE)"
+          fi
+
+          echo "Mac Sig: ${MAC_SIG:0:10}..."
+          echo "Win Sig: ${WIN_SIG:0:10}..."
+          echo "Constructing JSON payload..."
+
+          # Use jq to safely construct the JSON payload
           PAYLOAD=$(jq -n \
             --arg version "$VERSION" \
             --arg notes "Lanzamiento automatizado de Huntban Desktop v$VERSION" \
@@ -233,7 +250,8 @@ jobs:
               }
             }')
 
-          curl -X POST https://next.huntban.com/updates/webhook \
+          echo "Dispatching Webhook..."
+          curl -v -X POST "https://next.huntban.com/updates/webhook" \
                -H "Authorization: Bearer $UPDATE_WEBHOOK_SECRET" \
                -H "Content-Type: application/json" \
                -d "$PAYLOAD"
