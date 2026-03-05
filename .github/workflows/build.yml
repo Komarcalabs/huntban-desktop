@@ -34,16 +34,10 @@ jobs:
           cd huntban-client
           npm install
 
-      - name: Create signing key file
-        shell: bash
-        run: |
-          cd huntban-client
-          echo "${{ secrets.TAURI_SIGNING_PRIVATE_KEY }}" > sign_private.txt
-
       - name: Build Windows App
         run: |
           cd huntban-client
-          npm run tauri:build
+          npx tauri build
         env:
           TAURI_SIGNING_PRIVATE_KEY: ${{ secrets.TAURI_SIGNING_PRIVATE_KEY }}
           TAURI_SIGNING_PRIVATE_KEY_PASSWORD: huntban
@@ -81,15 +75,10 @@ jobs:
           cd huntban-client
           npm install
 
-      - name: Create signing key file
-        run: |
-          cd huntban-client
-          echo "${{ secrets.TAURI_SIGNING_PRIVATE_KEY }}" > sign_private.txt
-
       - name: Build MacOS App
         run: |
           cd huntban-client
-          npm run tauri:build
+          npx tauri build
         env:
           TAURI_SIGNING_PRIVATE_KEY: ${{ secrets.TAURI_SIGNING_PRIVATE_KEY }}
           TAURI_SIGNING_PRIVATE_KEY_PASSWORD: huntban
