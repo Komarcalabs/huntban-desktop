@@ -80,6 +80,13 @@ jobs:
             npx tauri signer sign -p "$TAURI_SIGNING_PRIVATE_KEY_PASSWORD" -f sign_private.txt "$EXE_FILE" > "$EXE_FILE.sig"
           fi
 
+          # Sign ZIP (Updater)
+          ZIP_FILE=$(ls src-tauri/target/release/bundle/nsis/*.zip | head -n 1)
+          if [ -f "$ZIP_FILE" ]; then
+            echo "Signing $ZIP_FILE..."
+            npx tauri signer sign -p "$TAURI_SIGNING_PRIVATE_KEY_PASSWORD" -f sign_private.txt "$ZIP_FILE" > "$ZIP_FILE.sig"
+          fi
+
           rm sign_private.txt
 
       - name: Upload Artifacts
@@ -149,6 +156,13 @@ jobs:
           if [ -f "$DMG_FILE" ]; then
             echo "Signing $DMG_FILE..."
             npx tauri signer sign -p "$TAURI_SIGNING_PRIVATE_KEY_PASSWORD" -f sign_private.txt "$DMG_FILE" > "$DMG_FILE.sig"
+          fi
+
+          # Sign Tarball (Updater)
+          TAR_FILE=$(ls src-tauri/target/release/bundle/macos/*.app.tar.gz | head -n 1)
+          if [ -f "$TAR_FILE" ]; then
+            echo "Signing $TAR_FILE..."
+            npx tauri signer sign -p "$TAURI_SIGNING_PRIVATE_KEY_PASSWORD" -f sign_private.txt "$TAR_FILE" > "$TAR_FILE.sig"
           fi
 
           rm sign_private.txt
