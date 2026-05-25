@@ -25,6 +25,8 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: "20"
+          cache: "npm"
+          cache-dependency-path: huntban-client/package-lock.json
 
       - name: Setup Bun
         uses: oven-sh/setup-bun@v2
@@ -48,7 +50,7 @@ jobs:
       - name: Install dependencies
         run: |
           cd huntban-client
-          bun install
+          npm install
 
       - name: Sync version to huntban-client
         shell: bash
@@ -62,7 +64,7 @@ jobs:
       - name: Build Windows App
         run: |
           cd huntban-client
-          bunx tauri build --ignore-version-mismatches
+          npx tauri build --ignore-version-mismatches
         env:
           TAURI_SIGNING_PRIVATE_KEY: ${{ secrets.TAURI_SIGNING_PRIVATE_KEY }}
           TAURI_SIGNING_PRIVATE_KEY_PASSWORD: ${{ secrets.TAURI_SIGNING_PRIVATE_KEY_PASSWORD }}
@@ -80,7 +82,7 @@ jobs:
           # Dynamically find and sign all target files
           find "src-tauri/target/release/bundle" -type f \( -name "*.msi" -o -name "*.exe" -o -name "*.zip" \) -not -name "*.sig" | while read file; do
             echo "Signing $file..."
-            bunx tauri signer sign -p "$TAURI_SIGNING_PRIVATE_KEY_PASSWORD" -f sign_private.txt "$file" > "$file.sig"
+            npx tauri signer sign -p "$TAURI_SIGNING_PRIVATE_KEY_PASSWORD" -f sign_private.txt "$file" > "$file.sig"
           done
 
           rm sign_private.txt
@@ -111,6 +113,8 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: "20"
+          cache: "npm"
+          cache-dependency-path: huntban-client/package-lock.json
 
       - name: Setup Bun
         uses: oven-sh/setup-bun@v2
@@ -134,7 +138,7 @@ jobs:
       - name: Install dependencies
         run: |
           cd huntban-client
-          bun install
+          npm install
 
       - name: Sync version to huntban-client
         run: |
@@ -147,7 +151,7 @@ jobs:
       - name: Build MacOS App
         run: |
           cd huntban-client
-          bunx tauri build --ignore-version-mismatches
+          npx tauri build --ignore-version-mismatches
         env:
           TAURI_SIGNING_PRIVATE_KEY: ${{ secrets.TAURI_SIGNING_PRIVATE_KEY }}
           TAURI_SIGNING_PRIVATE_KEY_PASSWORD: ${{ secrets.TAURI_SIGNING_PRIVATE_KEY_PASSWORD }}
@@ -164,7 +168,7 @@ jobs:
           # Dynamically find and sign all target files
           find "src-tauri/target/release/bundle" -type f \( -name "*.dmg" -o -name "*.app.tar.gz" \) | while read file; do
             echo "Signing $file..."
-            bunx tauri signer sign -p "$TAURI_SIGNING_PRIVATE_KEY_PASSWORD" -f sign_private.txt "$file" > "$file.sig"
+            npx tauri signer sign -p "$TAURI_SIGNING_PRIVATE_KEY_PASSWORD" -f sign_private.txt "$file" > "$file.sig"
           done
 
           rm sign_private.txt
