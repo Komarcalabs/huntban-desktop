@@ -1,6 +1,6 @@
 {
   "name": "huntban-desktop",
-  "version": "0.1.66",
+  "version": "0.1.67",
   "private": true,
   "scripts": {
     "bump": "node scripts/bump-version.mjs"
